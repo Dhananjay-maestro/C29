@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Birthday Princee</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#fff7fb;
+      --bg2:#fff0f7;
+      --accent:#d81b60; /* pink accent */
+      --accent-2:#ff80ab;
+      --muted:#5a5a5a;
+      --card-radius:28px;
+      --card-padding:28px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Poppins,Arial; background:linear-gradient(135deg,var(--bg1),var(--bg2)); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
+    .stage{min-height:100vh; width:100vw; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; padding:24px;}
+
+    .glow{position:absolute; border-radius:50%; filter:blur(80px); opacity:0.22; pointer-events:none;}
+    .g1{width:420px;height:420px;background:radial-gradient(circle at 30% 30%,#ffeef4,transparent 40%);left:-80px;top:-60px}
+    .g2{width:520px;height:520px;background:radial-gradient(circle at 70% 70%,#fff0f6,transparent 40%);right:-120px;bottom:-100px}
+
+    .card{
+      width:min(920px,94%);
+      max-width:1100px;
+      height:min(680px,86vh);
+      background:linear-gradient(180deg,rgba(255,255,255,0.98),rgba(255,255,255,0.95));
+      border-radius:var(--card-radius);
+      box-shadow:0 30px 80px rgba(20,20,50,0.06);
+      display:flex; gap:24px; padding:var(--card-padding); align-items:center; position:relative;
+      overflow:visible;
+    }
+
+    .left{flex:1; display:flex; justify-content:center; align-items:center; transform:translateX(-12px); pointer-events:none;}
+    .balloon-bunch{width:460px; height:520px; position:relative; pointer-events:none; display:block;}
+
+/* Generic balloon style */
+    .balloon{
+      position:absolute;
+      transform-origin:center bottom;
+      z-index:2;
+      user-select:none;
+      will-change:transform, opacity;
+      filter:drop-shadow(0 6px 18px rgba(30,10,30,0.08));
+    }
+
+/* positions for many balloons */
+    .b-center{left:8%; bottom:6%; width:440px; height:440px; transform:translateX(-6%);}
+    /* subtle vertical float */
+    @keyframes float-soft{
+      0%{transform:translateY(0) rotate(-2deg)}
+      50%{transform:translateY(-18px) rotate(4deg)}
+      100%{transform:translateY(0) rotate(-2deg)}
+    }
+    .balloon svg{ display:block; }
+    .balloon{ animation: float-soft 7s ease-in-out infinite; }
+
+    .right{flex:1; padding:16px; display:flex; flex-direction:column;}
+    .badge{font-family:Merienda; color:var(--accent); background:rgba(216,27,96,0.06); padding:8px 14px; border-radius:18px; display:inline-block;}
+
+    h1{font-family:Merienda; font-size:3.1rem; color:var(--accent-2); margin:16px 0 6px; letter-spacing:0.4px;}
+    .subtitle{font-size:1.05rem; color:var(--muted); margin-bottom:18px;}
+
+    .action-row{
+      display:flex;
+      gap:20px;
+      align-items:flex-start;
+    }
+
+    .btn{
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:white; padding:12px 18px;
+      border-radius:24px; border:2px solid var(--accent-2);
+      font-weight:600; cursor:pointer;
+      box-shadow:0 0 14px rgba(255,128,171,0.25);
+      transition:.25s ease;
+      outline: none;
+    }
+    .btn.secondary{
+      background:transparent;
+      color:var(--accent-2);
+      border:2px solid var(--accent-2);
+    }
+
+    .btn:hover{transform:scale(1.07); box-shadow:0 0 20px rgba(255,128,171,0.35);}
+    .btn.secondary:hover{color:var(--accent); border-color:var(--accent); box-shadow:0 0 20px rgba(255,128,171,0.25);}
+
+    .btn:active{transform:scale(.97)}
+    .btn:focus{box-shadow:0 0 0 4px rgba(255,128,171,0.12); border-color:var(--accent)}
+
+    .cute-click{
+      margin-top:6px;
+      font-size:0.95rem;
+      text-align:center;
+      color:var(--accent);
+      font-weight:700;
+    }
+
+    #confettiCanvas{position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; border-radius:var(--card-radius);}
+
+    .sparkle{
+      position:absolute; width:8px; height:8px; border-radius:50%; background:white;
+      box-shadow:0 0 18px white; opacity:0.85;
+      pointer-events:none;
+    }
+
+    /* For very small screens */
+    @media(max-width:880px){
+      .card{flex-direction:column; height:auto;}
+      h1{font-size:2.2rem;}
+      .right{text-align:center; align-items:center;}
+      .action-row{justify-content:center;}
+      .balloon-bunch{width:320px;height:420px}
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .balloon { animation: none !important; transform: none !important; transition: none !important; }
+      .btn, .btn.secondary { transition: none !important; }
+    }
+
+    .popup-list p { margin:8px 0; word-break:break-word; }
+
+  </style>
+</head>
+<body>
+  <div class="stage" role="main">
+    <div class="glow g1" aria-hidden="true"></div>
+    <div class="glow g2" aria-hidden="true"></div>
+
+    <div class="card" aria-label="Birthday card">
+
+      <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+      <!-- New: Balloon bunch updated to closely match provided photo -->
+      <div class="left" aria-hidden="true" style="pointer-events:none;">
+        <div class="balloon-bunch" aria-hidden="true">
+
+          <!-- We place one large SVG that composes a dense clustered bouquet similar to the photo -->
+          <div class="balloon b-center" aria-hidden="true">
+            <svg viewBox="0 0 900 900" width="440" height="440" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <defs>
+                <!-- multiple pink gradients so each circle can reference -->
+                <radialGradient id="p1" cx="35%" cy="28%" r="80%">
+                  <stop offset="0%" stop-color="#fff0f6"/>
+                  <stop offset="35%" stop-color="#ffd6ea"/>
+                  <stop offset="80%" stop-color="#ff9fc3"/>
+                  <stop offset="100%" stop-color="#d81b60"/>
+                </radialGradient>
+                <radialGradient id="p2" cx="30%" cy="30%" r="70%">
+                  <stop offset="0%" stop-color="#fff7fb"/>
+                  <stop offset="50%" stop-color="#ffdfe9"/>
+                  <stop offset="100%" stop-color="#ff80ab"/>
+                </radialGradient>
+                <radialGradient id="p3" cx="40%" cy="25%" r="75%">
+                  <stop offset="0%" stop-color="#fff6fb"/>
+                  <stop offset="50%" stop-color="#ffd1e6"/>
+                  <stop offset="100%" stop-color="#ff6fa5"/>
+                </radialGradient>
+
+                <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity="0.12"/>
+                </filter>
+
+                <!-- small glossy highlight -->
+                <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="rgba(255,255,255,0.96)"/>
+                  <stop offset="70%" stop-color="rgba(255,255,255,0.12)"/>
+                  <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+                </linearGradient>
+
+                <!-- tiny heart symbol -->
+                <symbol id="heart" viewBox="0 0 32 28">
+                  <path d="M16 26s-12-7.4-12-14.4C4 6 8 2 12.5 4 14.8 5 16 7.5 16 7.5S17.2 5 19.5 4C24 2 28 6 28 11.6 28 18.6 16 26 16 26z" fill="#fff" opacity="0.95"/>
+                </symbol>
+
+                <!-- small flower shape -->
+                <symbol id="flower" viewBox="0 0 24 24">
+                  <g fill="#fff">
+                    <circle cx="12" cy="12" r="1.6"/>
+                    <path d="M12 0 C13 4 16 3 18 5 C20 7 19 10 23 11 C19 12 20 15 18 17 C16 19 13 18 12 22 C11 18 8 19 6 17 C4 15 5 12 1 11 C5 10 4 7 6 5 C8 3 11 4 12 0z"/>
+                  </g>
+                </symbol>
+
+              </defs>
+
+              <!-- large back balloons (grouped circles) -->
+              <!-- coordinates chosen to visually cluster similarly to image -->
+              <g filter="url(#softShadow)">
+                <ellipse cx="460" cy="170" rx="140" ry="140" fill="url(#p1)" />
+                <ellipse cx="330" cy="190" rx="110" ry="110" fill="url(#p2)" />
+                <ellipse cx="590" cy="210" rx="100" ry="100" fill="url(#p3)" />
+                <ellipse cx="240" cy="290" rx="96" ry="96" fill="url(#p1)" />
+                <ellipse cx="420" cy="300" rx="120" ry="120" fill="url(#p2)" />
+                <ellipse cx="560" cy="330" rx="92" ry="92" fill="url(#p3)" />
+                <ellipse cx="700" cy="300" rx="86" ry="86" fill="url(#p1)" />
+                <ellipse cx="160" cy="200" rx="72" ry="72" fill="url(#p2)" />
+                <ellipse cx="120" cy="360" rx="64" ry="64" fill="url(#p3)" />
+                <ellipse cx="680" cy="420" rx="74" ry="74" fill="url(#p2)" />
+                <ellipse cx="500" cy="430" rx="88" ry="88" fill="url(#p1)" />
+                <ellipse cx="360" cy="460" rx="82" ry="82" fill="url(#p3)" />
+                <ellipse cx="220" cy="480" rx="62" ry="62" fill="url(#p2)" />
+                <ellipse cx="580" cy="520" rx="70" ry="70" fill="url(#p1)" />
+                <ellipse cx="420" cy="560" rx="60" ry="60" fill="url(#p3)" />
+                <ellipse cx="310" cy="540" rx="50" ry="50" fill="url(#p2)" />
+                <ellipse cx="720" cy="520" rx="44" ry="44" fill="url(#p3)" />
+              </g>
+
+              <!-- foreground shiny highlights (sheen ellipses) -->
+              <g opacity="0.95" fill="url(#sheen)">
+                <ellipse cx="410" cy="160" rx="34" ry="20" />
+                <ellipse cx="330" cy="190" rx="22" ry="14" />
+                <ellipse cx="560" cy="220" rx="20" ry="12" />
+                <ellipse cx="460" cy="420" rx="28" ry="16" />
+                <ellipse cx="420" cy="300" rx="30" ry="18" />
+                <ellipse cx="230" cy="300" rx="18" ry="10" />
+              </g>
+
+              <!-- small decorative hearts and flowers across cluster -->
+              <use href="#heart" x="540" y="250" width="18" height="16" opacity="0.95" transform="rotate(-10 549 258)"/>
+              <use href="#heart" x="680" y="280" width="16" height="14" opacity="0.9" transform="rotate(8 688 287)"/>
+              <use href="#flower" x="320" y="220" width="16" height="16" opacity="0.95"/>
+              <use href="#flower" x="480" y="340" width="18" height="18" opacity="0.9"/>
+              <use href="#flower" x="250" y="420" width="14" height="14" opacity="0.9"/>
+
+              <!-- thin strings converging to knot -->
+              <g stroke="#ffd3e6" stroke-width="1.6" stroke-linecap="round" opacity="0.95" fill="none">
+                <!-- a set of many paths to emulate tied strings -->
+                <path d="M400 560 C380 620 360 700 420 740" />
+                <path d="M420 560 C420 620 400 700 460 740" />
+                <path d="M460 560 C440 620 420 700 480 740" />
+                <path d="M340 540 C340 600 360 700 420 742" />
+                <path d="M500 540 C500 600 520 700 480 742" />
+                <path d="M300 520 C320 600 350 700 420 748" />
+                <path d="M540 520 C560 600 600 700 480 748" />
+                <path d="M600 500 C600 620 580 710 480 756" />
+                <path d="M220 500 C260 620 300 700 420 760" />
+              </g>
+
+              <!-- knot / tie -->
+              <g transform="translate(420,760)">
+                <path d="M0 0 C10 -6 30 -6 40 0 C50 6 80 6 90 0 L86 12 C80 18 54 18 42 12 C30 6 12 6 0 0 Z" fill="#ff80ab"/>
+                <!-- tassel lines -->
+                <g stroke="#ffb3d1" stroke-width="2" stroke-linecap="round">
+                  <path d="M10 10 L10 36"/>
+                  <path d="M18 10 L18 40"/>
+                  <path d="M26 10 L26 44"/>
+                  <path d="M34 10 L34 40"/>
+                  <path d="M42 10 L42 44"/>
+                  <path d="M50 10 L50 40"/>
+                </g>
+              </g>
+
+            </svg>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="right">
+
+        <div class="badge">For Princee</div>
+        <h1>Happy Birthday <span style="color:var(--accent)">Princee</span><span style="margin-left:-14px;"> 🎀</span></h1>
+        <div class="subtitle">May your day sparkle with smiles, hugs and sweet surprises ✨</div>
+
+        <!-- BOTH BUTTONS WITH LABELS (clean - no duplicates) -->
+        <div class="action-row">
+
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <button class="btn secondary" id="confettiBtn" aria-label="Celebrate">Celebrate🎀</button>
+            <div class="cute-click" aria-hidden="true">Click ↑</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <button class="btn secondary" id="msgBtn" aria-label="Messages">Messages💬</button>
+            <div class="cute-click" aria-hidden="true">Click ↑</div>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- decorative sparkles -->
+      <div id="sparkles" aria-hidden="true"></div>
+    </div>
+
+  </div>
+
+  <script>
+    /* CONFETTI & POPUP HANDLING preserved and recolored to pink palette.
+       Balloon visuals are single composite SVG matching the provided photo.
+    */
+
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0, confetti = [], animationId = null;
+    let resizeTimeout = null;
+
+    function setCanvasSize(){
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      W = rect.width; H = rect.height;
+    }
+
+    function resizeCanvas(){
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(setCanvasSize, 80);
+    }
+    window.addEventListener('load', () => { resizeCanvas(); attachHandlers(); createInitialSparkles(18); });
+    window.addEventListener('resize', resizeCanvas);
+
+    function rand(min,max){ return Math.random()*(max-min)+min }
+
+    function spawnConfetti(count = 180){
+      const limit = Math.min(count, window.innerWidth < 480 ? 70 : count);
+      for(let i=0;i<limit;i++){
+        confetti.push({
+          x: rand(0, W),
+          y: rand(-H, 0),
+          s: rand(6,12),
+          vx: rand(-1.5,1.5),
+          vy: rand(2,6),
+          c: ['#ff80ab','#ffb3d1','#ffd6ea','#ff9fc3','#ff5c8a'][Math.floor(rand(0,5))]
+        });
+      }
+      if(!animationId) animate();
+    }
+
+    function drawConfetti(){
+      ctx.clearRect(0,0,W,H);
+      for(const p of confetti){
+        p.x += p.vx; p.y += p.vy;
+        ctx.fillStyle = p.c;
+        ctx.fillRect(p.x, p.y, p.s, p.s*0.6);
+      }
+      confetti = confetti.filter(p => p.y < H + 40);
+      if(confetti.length === 0){
+        cancelAnimationFrame(animationId);
+        animationId = null;
+        ctx.clearRect(0,0,W,H);
+      }
+    }
+
+    function animate(){
+      animationId = requestAnimationFrame(animate);
+      drawConfetti();
+    }
+
+    function attachHandlers(){
+      const cBtn = document.getElementById('confettiBtn');
+      const mBtn = document.getElementById('msgBtn');
+      if(cBtn){
+        cBtn.onclick = () => { spawnConfetti(220); createSparkles(26); playClickPulse(cBtn); };
+      }
+      if(mBtn){
+        mBtn.onclick = showMessagesPopup;
+      }
+    }
+
+    const sparklesEl = document.getElementById('sparkles');
+    let sparkleCleanupTimer = null;
+
+    function createSparkles(n){
+      clearTimeout(sparkleCleanupTimer);
+      const frag = document.createDocumentFragment();
+      for(let i=0;i<n;i++){
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        const left = Math.random()*80 + 8;
+        const top = Math.random()*60 + 12;
+        s.style.left = left + '%';
+        s.style.top = top + '%';
+        s.style.width = (6 + Math.random()*8) + 'px';
+        s.style.height = s.style.width;
+        s.style.opacity = (0.6 + Math.random()*0.4);
+        s.style.background = 'white';
+        s.style.boxShadow = '0 0 18px rgba(255,255,255,0.95)';
+        frag.appendChild(s);
+        (function(el){
+          requestAnimationFrame(() => {
+            el.style.transition = 'transform 900ms ease-out, opacity 900ms';
+            el.style.transform = 'translateY(-40px) scale(1.1)';
+            el.style.opacity = '0';
+          });
+        })(s);
+      }
+      sparklesEl.appendChild(frag);
+      sparkleCleanupTimer = setTimeout(() => { sparklesEl.innerHTML = ''; }, 1100);
+    }
+
+    function createInitialSparkles(n){
+      createSparkles(n);
+    }
+
+    function playClickPulse(btn){
+      btn.style.transform = 'scale(0.95)';
+      setTimeout(()=>{ btn.style.transform = ''; }, 120);
+    }
+
+    /* Simple messages popup (inline) */
+    function showMessagesPopup(){
+      const existing = document.querySelector('.popup-list');
+      if(existing){
+        existing.remove();
+        return;
+      }
+      const popup = document.createElement('div');
+      popup.className = 'popup-list';
+      popup.style.position = 'absolute';
+      popup.style.right = '24px';
+      popup.style.bottom = '26px';
+      popup.style.background = 'white';
+      popup.style.border = '1px solid rgba(0,0,0,0.06)';
+      popup.style.boxShadow = '0 12px 40px rgba(20,20,50,0.06)';
+      popup.style.borderRadius = '12px';
+      popup.style.padding = '14px';
+      popup.style.width = '260px';
+      popup.style.zIndex = '1200';
+      popup.innerHTML = '<p><strong>Messages</strong></p><p>1. Wishing you the happiest birthday 🎉</p><p>2. Have a magical day, Princee! 🌸</p><p style="font-size:0.9rem;color:#666;margin-top:8px;">Click again to close.</p>';
+      document.querySelector('.card').appendChild(popup);
+    }
+  </script>
+</body>
+</html>
